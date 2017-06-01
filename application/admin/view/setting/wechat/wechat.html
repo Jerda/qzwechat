@@ -1,0 +1,73 @@
+{include file="public/header" /}
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i><a href="{:url('index/index')}">首页</a> <span class="c-gray en">&gt;</span>设置<span class="c-gray en">&gt;</span><span class="c-gray en">微信配置</span><a class="btn btn-success radius r" style="line-height:1.6em;margin-top:-3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="Huialert Huialert-success" hidden><i class="icon-remove"></i></div>
+	<div class="Huialert Huialert-danger" hidden><i class="icon-remove"></i></div>
+	<form class="form form-horizontal form-o2o-add" id="form-o2o-add" onsubmit="return false">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">app_id</label>
+			<div class="formControls col-xs-8 col-sm-4">
+				<input type="text" class="input-text" value="{$config.app_id}" placeholder="" id="app_id" name="app_id">
+			</div>
+			<i class="help Hui-iconfont" data-toggle="tooltip" data-placement="right" title="11231">&#xe633;</i>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">secret</label>
+			<div class="formControls col-xs-8 col-sm-4">
+				<input type="text" class="input-text" value="{$config.secret}" placeholder="" id="secret" name="secret">
+			</div>
+			<i class="help Hui-iconfont" data-toggle="tooltip" data-placement="right" title="11231">&#xe633;</i>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">token</label>
+			<div class="formControls col-xs-8 col-sm-4">
+				<input type="text" class="input-text" value="{$config.token}" placeholder="" id="token" name="token">
+			</div>
+			<i class="help Hui-iconfont" data-toggle="tooltip" data-placement="right" title="11231">&#xe633;</i>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">aes_key</label>
+			<div class="formControls col-xs-8 col-sm-4">
+				<input type="text" class="input-text" value="{$config.aes_key}" placeholder="" id="aes_key" name="aes_key">
+			</div>
+			<i class="help Hui-iconfont" data-toggle="tooltip" data-placement="right" title="11231">&#xe633;</i>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button  onclick="send()" class="btn btn-primary radius" ><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+
+				<button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{include file="public/footer" /}
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<!--/请在上方写此页面业务相关的脚本-->
+<script>
+    function send() {
+        var url = "{:url('setting.wechat/weChatSetting')}";
+        var data = $('.form-o2o-add').serialize();
+        $.post(url, data, function(result) {
+            if (result.status == 0) {
+                $('.Huialert-danger').text(result.msg);
+                $('.Huialert-danger').show('normal');
+                setTimeout('$(".Huialert").hide("normal")',8000);
+            } else {
+                $('.Huialert-success').text(result.msg);
+                $('.Huialert-success').show('normal');
+//                $('.Huialert').delay(3000).slideUp(300);
+                setTimeout('$(".Huialert").hide("normal")',8000);
+            }
+        }, 'JSON');
+    }
+</script>
+</body>
+</html>

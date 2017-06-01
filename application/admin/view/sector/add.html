@@ -1,0 +1,52 @@
+{include file="public/header" /}
+<body>
+<div class="page-container">
+    <div class="Huialert Huialert-success" hidden><i class="icon-remove"></i></div>
+    <div class="Huialert Huialert-danger" hidden><i class="icon-remove"></i></div>
+    <form class="form form-horizontal form-qzwecht" id="form-o2o-add" onsubmit="return false">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>部门名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>上级部门</label>
+            <div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="parent_id" class="select">
+					<option value="0">一级部门</option>
+					{volist name="sectors" id="sector"}
+					<option value="{$sector.id}">{:treeSign($sector.level)}{$sector.name}</option>
+                    {/volist}
+				</select>
+				</span>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button onclick="formSend(SCOPE.add_url)" class="btn btn-primary radius" ><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+
+                <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{include file="public/footer" /}
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    var SCOPE = {
+        'add_url' : "{:url('sector/add')}",
+    };
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

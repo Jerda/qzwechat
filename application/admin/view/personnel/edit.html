@@ -1,0 +1,138 @@
+{include file="public/header" /}
+<body>
+<div class="page-container">
+    <form class="form form-horizontal form-o2o-add" id="form-o2o-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职员姓名</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$personnel.name}" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$personnel.position}" placeholder="" id="position" name="position">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位级别</label>
+            <div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="level" class="" id="level">
+					<option value="0">请选择</option>
+					{for start="1" end="10"}
+                    {$i}
+					<option value="{$i}" {if condition="$personnel.level eq $i"}selected{/if}>{$i}</option>
+                    {/for}
+				</select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>电话</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$personnel.tel}" placeholder="" id="tel" name="tel">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属部门</label>
+            <div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="sector_id" class="" id="sector">
+					<option value="0">请选择</option>
+					{volist name="sectors" id="sector"}
+					<option value="{$sector.id}">{$sector.name}</option>
+                    {/volist}
+				</select>
+                <select name="se_sector_id" class="" id="se_sector" hidden>
+					<option value="0">请选择</option>
+				</select>
+				</span>
+            </div>
+        </div>
+        <input type="hidden" name="id" value="{$personnel.id}">
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button  type="button" class="btn btn-primary radius" onclick="sub()"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+
+                <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{include file="public/footer" /}
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript">
+var SCPOE = {
+    'edit' : "{:url('personnel/store')}"
+};
+
+$('#sector').change(function () {
+    var url = "{:url('sector/getSeSector')}";
+    var sector_id = this.value;
+    if (sector_id == 0) {
+        $('#se_sector').hide();
+        return;
+    }
+
+    var postData = {'sector_id' : sector_id};
+    var html = '';
+    $.post(url, postData, function(result) {
+        $(result.data).each(function(index) {
+            html += "<option value='"+this.id+"'>"+this.name+"</option>"
+        });
+        $('#se_sector').html(html);
+        $('#se_sector').show();
+    }, 'JSON');
+});
+
+/**
+ *  初始化用户部门选项
+ */
+/*$(function () {
+    var sector_id = '';
+    var arr = sector_id.split(',');
+    $('#sector').val(arr[0]);
+    //如果有二级部门，渲染二级部门并选中
+    if (arr.length > 1) {
+        var url = "{:url('sector/getSeSector')}";
+        var sector_id = arr[0];
+
+        var postData = {'sector_id': sector_id};
+        var html = '';
+        $.post(url, postData, function (result) {
+            $(result.data).each(function (index) {
+                html += "<option value='" + this.id + "'>" + this.name + "</option>"
+            });
+            $('#se_sector').html(html);
+            $('#se_sector').show();
+            $('#se_sector').val(arr[1]);
+        }, 'JSON');
+    }
+});*/
+function sub() {
+    $.ajax({
+        type: 'POST',
+        url : SCPOE.edit,
+        data : $('#form-o2o-add').serialize(),
+        dataType : 'JSON',
+        async : false,
+        success : function (result) {
+            layer.confirm(result.msg, {
+                btn: ['确认']
+            }, function(){
+                window.location.reload();
+            });
+        },
+        error : function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log(2);
+        },
+    });
+};
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

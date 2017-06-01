@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+	<title>组织架构</title>
+	<style type="text/css">
+		html,body{
+			width:100%;
+			height:100%;
+			margin:0;
+			padding:0;
+			background-color: #D8D8D8;
+		}
+		.banner{
+			width:100%;
+			height:40px;
+			background:#d9534f;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			padding-top: 10px;
+			position: fixed;
+			top:0;
+			z-index: 999;
+		}
+		.banner input{
+			width:40%;
+			height:60%;
+			border-radius: 5px;
+		}
+		.banner select{
+			width:20%;
+			height:70%;
+			border-radius: 5px;
+		}
+		.banner button{
+			height:70%;
+			border-radius: 5px;
+		}
+		#firstpane{
+			padding-top: 50px;
+		}
+		.menu_list{;margin:0 auto;}
+		.menu_head{
+			height: 35px;
+			line-height: 35px;
+			padding-left: 38px;
+			font-size: 14px;
+			color: #525252;
+			cursor: pointer;
+			border-left: 1px solid #e1e1e1;
+			border-right: 1px solid #e1e1e1;
+			border-bottom: 1px solid #e1e1e1;
+			border-top: 1px solid #F1F1F1;
+			position: relative;
+			margin: 0px;
+			font-weight: bold;
+		}
+		.menu_list .current{background:#f1f1f1}
+		.menu_body{
+			line-height: 38px;
+			border-left: 1px solid #e1e1e1;
+			background: #fff;
+			border-right: 1px solid #e1e1e1;
+			
+		}
+		.menu_body a{display:block;height:35px;line-height:35px;padding-left:38px;color:#777777;background:#fff;text-decoration:none;border-bottom:1px solid #e1e1e1;}
+		.menu_body a:hover{text-decoration:none;}
+	</style>
+<body>
+	<header class="banner">
+		<form action="{:url('addressbook/aaa')}" method="post" name="searchForm">
+			<input id="search" type="text" name="keyword">
+			<select name="sector_id[]" id="sector_id">
+				<option value="0">选择</option>
+				{volist name="sectors" id="sector"}
+				<option value="{$sector.id}">{$sector.name}</option>
+				{/volist}
+			</select>
+			<select name="sector_id[]" id="se_sector_id">
+				<option value="0">选择</option>
+			</select>
+			<button>搜索</button>
+		</form>
+	</header>
+	<div id="firstpane" class="menu_list">
+		{volist name="sectors" id="sector"}
+		<div>
+			<h3 class="menu_head current" id='{$sector.id}'>{$sector.name}</h3>
+			<div style="display:none" class="menu_body">
+			</div>
+		</div>
+		{/volist}
+	</div>
+	<script type="text/javascript" src="__STATIC__/admin/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var searchForm = document.forms.searchForm;
+			searchForm.onsubmit = function(){
+			    if($('#search').val()==''&&$('#sector_id').val()==0){
+			        return false;
+				}
+			}
+			$('#search').on('focus',function(){
+				$('#firstpane').fadeOut();
+			})
+			$('#search').on('blur',function(){
+				$('#firstpane').fadeIn();
+			})
+            var state = false;
+            $("#firstpane h3.menu_head").click(function(){
+                var a1 = $(this).next('div.menu_body');
+                a1.empty();
+                $.ajax({
+                url:"{:url('admin/sector/getSeSector')}",
+                data:{
+                sector_id:$(this).attr('id')
+            },
+//                console.log($(this).attr('id'));
+                success:function(res){
+                    console.log(res);
+                    res.data.forEach(function(c,i){
+                            console.log(c,i);
+                            var a = $('<a></a>');
+                            a.text(c.name);
+                            a.attr('sector_id',c.id);
+                            a.attr('href', "/qzwechat/public/index.php/home/addressbook/aaa?sector_id="+c.id+".html");
+                            a1.append(a);
+                        });
+						/*$("a").on('click',function(){
+						 var url = "{:url('addressbook/aaa')}";
+						 var val = $(this).attr('sector_id');
+						 var data = {
+						 'sector_id' : [val]
+						 };
+						 $.post(url, data, function(result) {
+						 console.log(1);
+						 }, 'JSON');
+						 })*/
+                    }
+                })
+				$(this).addClass("current").next("div.menu_body").slideToggle(300).siblings("div.menu_body").slideUp("slow");
+            });
+            var selectState = false;
+			$('#sector_id').on('change',function(){
+			    console.log(this.value);
+			    var id = this.value;
+                var se_sector_id = $('#se_sector_id');
+                if(!selectState){
+
+                    se_sector_id.empty();
+//				return selectState = true;
+                    $.ajax({
+                    url:"{:url('admin/sector/getSeSector')}",
+                    data:{
+                    	sector_id:$(this).val(),
+                	},
+                    success:function(res){
+						console.log(res.data);
+                        res.data.forEach(function(c,i){
+                                var option = $('<option>');
+                                option.text(c.name);
+                                option.val(c.id);
+                                se_sector_id.append(option);
+                            })
+                        }
+                    })
+                }
+            })
+
+			// $("#secondpane h3.menu_head").mouseover(function(){
+			// 	$(this).addClass("current").next("div.menu_body").slideDown(500).siblings("div.menu_body").slideUp("slow");
+			// 	// $(this).siblings().removeClass("current");
+			// });	
+		});
+
+//		function query(val)
+//		{
+//		    var val = $(this).attr('sector_id');
+//		    var url = "{:url('address/aaa')}";
+////		    var val = obj.attr('sector_id');
+//		    console.log(val);
+//
+//		}
+
+	</script>
+</body>
+</html>

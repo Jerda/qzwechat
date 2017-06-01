@@ -1,0 +1,110 @@
+{include file="public/header" /}
+<body>
+<div class="page-container">
+    <div class="Huialert Huialert-success" hidden><i class="icon-remove"></i></div>
+    <div class="Huialert Huialert-danger" hidden><i class="icon-remove"></i></div>
+    <form class="form form-horizontal form-qzwechat" id="form-o2o-add" onsubmit="return false">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职员姓名</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="position" name="position">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位级别</label>
+            <div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="level" class="" id="level">
+					<option value="0">请选择</option>
+					{for start="1" end="10"}
+                    {$i}
+					<option value="{$i}">{$i}</option>
+                    {/for}
+				</select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>电话</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="tel" name="tel">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属部门</label>
+            <div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="sector_id" class="" id="sector">
+					<option value="0">请选择</option>
+					{volist name="sectors" id="sector"}
+					<option value="{$sector.id}">{$sector.name}</option>
+                    {/volist}
+				</select>
+                <select name="se_sector_id" class="" id="se_sector" hidden>
+					<option value="0">请选择</option>
+				</select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>联系地址</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="" name="address">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button onclick="formSend(SCOPE.add_url)" class="btn btn-primary radius" ><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+
+                <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{include file="public/footer" /}
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/admin/hui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+var SCOPE = {
+    'add_url' : "{:url('personnel/store')}"
+};
+$('#sector').change(function () {
+    var url = "{:url('sector/getSeSector')}";
+    var sector_id = this.value;
+
+    if (sector_id == 0) {
+        $('#se_sector').hide();
+        return;
+    }
+
+    var postData = {'sector_id' : sector_id};
+    var html = '';
+    $.post(url, postData, function(result) {
+        if (result.data.length != 0) {
+            $(result.data).each(function(index) {
+                html += "<option value='"+this.id+"'>"+this.name+"</option>"
+            });
+            $('#se_sector').html(html);
+            $('#se_sector').show();
+        } else {
+            $('#se_sector').html('');
+            $('#se_sector').hide();
+        }
+    }, 'JSON');
+});
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

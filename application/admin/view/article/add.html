@@ -1,0 +1,133 @@
+<!--包含头部文件-->
+{include file="public/header" /}
+<article class="page-container">
+    <form class="form form-qzwechat" onsubmit="return false">
+        基本信息：
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>文章作者</label>
+            <div class="formControls col-xs-8 col-sm-3">
+                <input type="text" class="input-text" name="author">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>文章标题</label>
+            <div class="formControls col-xs-8 col-sm-3">
+                <input type="text" class="input-text" name="title">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">缩略图：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="file_upload" type="file" name="file" multiple="true" class="layui-upload-file">
+                <img style="display: none" id="upload_org_code_img" src="" width="150" height="150">
+                <input id="file_upload_image" name="img" type="hidden" multiple="true" value="">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">文章内容</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea id="editor" style="height:400px;max-height:500px;" name="content"></textarea>
+            </div>
+        </div>
+        <div class="Huialert Huialert-success" hidden><i class="icon-remove"></i></div>
+        <div class="Huialert Huialert-danger" hidden><i class="icon-remove"></i></div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button onclick="formSend(SCOPE.add_url)" class="btn btn-primary radius" ><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+
+                <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--包含尾部文件-->
+{include file="public/footer" /}
+<script type="text/javascript" src="__STATIC__/lib/wangEditor/dist/js/wangEditor.min.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/layui/layui.js"></script>
+
+<!--分配编辑器-->
+<script>
+    var SCOPE = {
+        'image_upload' : "{:url('image/upload')}",
+        'add_url' : "{:url('article/add')}"
+    };
+
+    layui.use('upload', function(){
+        layui.upload({
+            elem : '#file_upload',
+            url: '/qzwechat/public/index.php/admin/image/upload.html',
+            success: function(res){
+                $('#upload_org_code_img').attr('src', res.data);
+                $('#file_upload_image_other').attr('value', res.data);
+                $('#upload_org_code_img').show();
+            }
+        });
+    });
+
+    layui.use('upload', function(){
+        layui.upload({
+            elem : '#file_upload_other',
+            url: SCOPE.image_upload,
+            success: function(res){
+                $('#upload_org_code_img_other').attr('src', res.data);
+                $('#file_upload_image').attr('value', res.data);
+                $('#upload_org_code_img_other').show();
+            }
+        });
+    });
+
+    $(function () {
+
+        var editor = new wangEditor('editor');
+        // 上传图片（举例）
+        editor.config.uploadImgUrl = SCOPE.image_upload;
+
+        //name值
+        editor.config.uploadImgFileName = 'wangEditorFile';
+
+        editor.config.menus = $.map(wangEditor.config.menus, function(item, key) {
+            if (item === 'location') {
+                return null;
+            }
+            if (item === 'fullscreen') {
+                return null;
+            }
+            return item;
+        });
+
+        // 配置自定义参数（举例）
+        /*editor.config.uploadParams = {
+         token: 'abcdefg',
+         user: 'wangfupeng1988'
+         };*/
+
+        // 设置 headers（举例）
+        /*editor.config.uploadHeaders = {
+         'Accept' : 'text/x-json'
+         };*/
+
+        // 隐藏掉插入网络图片功能。该配置，只有在你正确配置了图片上传功能之后才可用。
+        //editor.config.hideLinkImg = true;
+        editor.create();
+
+        // 避免上面编辑器的 dropPanel 被下面的编辑器遮挡，保证下面的编辑器的 z-index 要小于上面的编辑器
+//    editor1.$editorContainer.css('z-index', 20)
+//    editor2.$editorContainer.css('z-index', 10)
+    });
+
+    /*function getMapImg()
+     {
+     var address = $('#address').val();
+     if (!address) {
+     layer.msg('地址不能为空');
+     }
+     $.post(SCOPE.getMap_url, {'address' : address}, function (result) {
+     console.log(result);
+     var html = "<img src="+result+"></img>";
+     $('#map').html(html);
+     }, 'JSON');
+     }*/
+</script>
+</body>
+</html>
